@@ -3,9 +3,9 @@ package com.factory.inspection.controller;
 import com.factory.inspection.common.Result;
 import com.factory.inspection.dto.PurchaseArrivalDTO;
 import com.factory.inspection.dto.SamplingDTO;
-import com.factory.inspection.entity.InspectionBatch;
 import com.factory.inspection.enums.InspectionStatus;
 import com.factory.inspection.service.InspectionBatchService;
+import com.factory.inspection.vo.InspectionBatchVO;
 import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
@@ -24,37 +24,37 @@ public class InspectionBatchController {
     }
 
     @PostMapping("/arrival")
-    public Result<InspectionBatch> handlePurchaseArrival(@Valid @RequestBody PurchaseArrivalDTO dto) {
+    public Result<InspectionBatchVO> handlePurchaseArrival(@Valid @RequestBody PurchaseArrivalDTO dto) {
         return Result.success(inspectionBatchService.handlePurchaseArrival(dto));
     }
 
     @PostMapping("/sampling")
-    public Result<InspectionBatch> performSampling(@Valid @RequestBody SamplingDTO dto) {
+    public Result<InspectionBatchVO> performSampling(@Valid @RequestBody SamplingDTO dto) {
         return Result.success(inspectionBatchService.performSampling(dto));
     }
 
     @PostMapping("/{batchNo}/start")
-    public Result<InspectionBatch> startInspection(@PathVariable String batchNo) {
+    public Result<InspectionBatchVO> startInspection(@PathVariable String batchNo) {
         return Result.success(inspectionBatchService.startInspection(batchNo));
     }
 
     @GetMapping("/{id}")
-    public Result<InspectionBatch> getById(@PathVariable Long id) {
+    public Result<InspectionBatchVO> getById(@PathVariable Long id) {
         return Result.success(inspectionBatchService.getById(id));
     }
 
     @GetMapping("/batchNo/{batchNo}")
-    public Result<InspectionBatch> getByBatchNo(@PathVariable String batchNo) {
+    public Result<InspectionBatchVO> getByBatchNo(@PathVariable String batchNo) {
         return Result.success(inspectionBatchService.getByBatchNo(batchNo));
     }
 
     @GetMapping
-    public Result<List<InspectionBatch>> list() {
+    public Result<List<InspectionBatchVO>> list() {
         return Result.success(inspectionBatchService.list());
     }
 
     @GetMapping("/status/{status}")
-    public Result<List<InspectionBatch>> listByStatus(@PathVariable InspectionStatus status) {
+    public Result<List<InspectionBatchVO>> listByStatus(@PathVariable InspectionStatus status) {
         return Result.success(inspectionBatchService.listByStatus(status));
     }
 }

@@ -1,11 +1,13 @@
 package com.factory.inspection.service;
 
+import com.factory.inspection.common.VoConverter;
 import com.factory.inspection.dto.StorageRecordDTO;
 import com.factory.inspection.entity.InspectionBatch;
 import com.factory.inspection.entity.StorageRecord;
 import com.factory.inspection.enums.InspectionStatus;
 import com.factory.inspection.exception.BusinessException;
 import com.factory.inspection.repository.StorageRecordRepository;
+import com.factory.inspection.vo.StorageRecordVO;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -34,8 +36,8 @@ public class StorageService {
     }
 
     @Transactional
-    public StorageRecord createStorage(StorageRecordDTO dto) {
-        InspectionBatch batch = inspectionBatchService.getByBatchNo(dto.getBatchNo());
+    public StorageRecordVO createStorage(StorageRecordDTO dto) {
+        InspectionBatch batch = inspectionBatchService.getByBatchNoInternal(dto.getBatchNo());
 
         if (batch.getStatus() != InspectionStatus.QUALIFIED
                 && batch.getStatus() != InspectionStatus.CONCESSION_APPROVED) {
@@ -62,25 +64,48 @@ public class StorageService {
 
         inspectionBatchService.updateStatus(dto.getBatchNo(), InspectionStatus.STORED);
 
-        return storageRecordRepository.save(storageRecord);
+        StorageRecord saved = storageRecordRepository.save(storageRecord);
+        initializeLazyAssociations(saved);
+        return VoConverter.toStorageRecordVO(saved);
     }
 
-    public StorageRecord getById(Long id) {
-        return storageRecordRepository.findById(id)
+    public StorageRecordVO getById(Long id) {
+        StorageRecord storageRecord = storageRecordRepository.findById(id)
                 .orElseThrow(() -> new BusinessException("入库记录不存在"));
+        initializeLazyAssociations(storageRecord);
+        return VoConverter.toStorageRecordVO(storageRecord);
     }
 
-    public StorageRecord getByStorageNo(String storageNo) {
-        return storageRecordRepository.findByStorageNo(storageNo)
+    public StorageRecordVO getByStorageNo(String storageNo) {
+        StorageRecord storageRecord = storageRecordRepository.findByStorageNo(storageNo)
                 .orElseThrow(() -> new BusinessException("入库记录不存在: " + storageNo));
+        initializeLazyAssociations(storageRecord);
+        return VoConverter.toStorageRecordVO(storageRecord);
     }
 
-    public List<StorageRecord> list() {
-        return storageRecordRepository.findAll();
+    public List<StorageRecordVO> list() {
+        List<StorageRecord> list = storageRecordRepository.findAll();
+        for (StorageRecord record : list) {
+            initializeLazyAssociations(record);
+        }
+        return VoConverter.toStorageRecordVOList(list);
     }
 
-    public List<StorageRecord> getByBatchId(Long batchId) {
-        return storageRecordRepository.findByBatchId(batchId);
+    public List<StorageRecordVO> getByBatchId(Long batchId) {
+        List<StorageRecord> list = storageRecordRepository.findByBatchId(batchId);
+        for (StorageRecord record : list) {
+            initializeLazyAssociations(record);
+        }
+        return VoConverter.toStorageRecordVOList(list);
+    }
+
+    private void initializeLazyAssociations(StorageRecord record) {
+        if (record.getBatch() != null) {
+            record.getBatch().getBatchNo();
+        }
+        if (record.getMaterial() != null) {
+            record.getMaterial().getMaterialName();
+        }
     }
 
     private String generateStorageNo() {

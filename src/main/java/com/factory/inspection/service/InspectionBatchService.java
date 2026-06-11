@@ -1,5 +1,6 @@
 package com.factory.inspection.service;
 
+import com.factory.inspection.common.VoConverter;
 import com.factory.inspection.dto.PurchaseArrivalDTO;
 import com.factory.inspection.dto.SamplingDTO;
 import com.factory.inspection.entity.InspectionBatch;
@@ -9,6 +10,7 @@ import com.factory.inspection.entity.Supplier;
 import com.factory.inspection.enums.InspectionStatus;
 import com.factory.inspection.exception.BusinessException;
 import com.factory.inspection.repository.InspectionBatchRepository;
+import com.factory.inspection.vo.InspectionBatchVO;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -40,10 +42,10 @@ public class InspectionBatchService {
     }
 
     @Transactional
-    public InspectionBatch handlePurchaseArrival(PurchaseArrivalDTO dto) {
-        PurchaseOrder purchaseOrder = purchaseOrderService.getByOrderNo(dto.getOrderNo());
-        Supplier supplier = supplierService.getByCode(dto.getSupplierCode());
-        Material material = materialService.getByCode(dto.getMaterialCode());
+    public InspectionBatchVO handlePurchaseArrival(PurchaseArrivalDTO dto) {
+        PurchaseOrder purchaseOrder = purchaseOrderService.getByOrderNoInternal(dto.getOrderNo());
+        Supplier supplier = supplierService.getByCodeInternal(dto.getSupplierCode());
+        Material material = materialService.getByCodeInternal(dto.getMaterialCode());
 
         InspectionBatch batch = new InspectionBatch();
         batch.setBatchNo(generateBatchNo());
@@ -57,12 +59,12 @@ public class InspectionBatchService {
         batch.setRemark(dto.getRemark());
         batch.setStatus(InspectionStatus.PENDING);
 
-        return inspectionBatchRepository.save(batch);
+        return VoConverter.toInspectionBatchVO(inspectionBatchRepository.save(batch));
     }
 
     @Transactional
-    public InspectionBatch performSampling(SamplingDTO dto) {
-        InspectionBatch batch = getByBatchNo(dto.getBatchNo());
+    public InspectionBatchVO performSampling(SamplingDTO dto) {
+        InspectionBatch batch = getByBatchNoInternal(dto.getBatchNo());
 
         if (batch.getStatus() != InspectionStatus.PENDING) {
             throw new BusinessException("当前批次状态不允许抽样，当前状态: " + batch.getStatus());
@@ -76,42 +78,71 @@ public class InspectionBatchService {
         batch.setSamplingScheme(dto.getSamplingScheme());
         batch.setStatus(InspectionStatus.SAMPLING);
 
-        return inspectionBatchRepository.save(batch);
+        return VoConverter.toInspectionBatchVO(inspectionBatchRepository.save(batch));
     }
 
     @Transactional
-    public InspectionBatch startInspection(String batchNo) {
-        InspectionBatch batch = getByBatchNo(batchNo);
+    public InspectionBatchVO startInspection(String batchNo) {
+        InspectionBatch batch = getByBatchNoInternal(batchNo);
         if (batch.getStatus() != InspectionStatus.SAMPLING) {
             throw new BusinessException("当前批次状态不允许开始检验，当前状态: " + batch.getStatus());
         }
         batch.setStatus(InspectionStatus.INSPECTING);
-        return inspectionBatchRepository.save(batch);
+        return VoConverter.toInspectionBatchVO(inspectionBatchRepository.save(batch));
     }
 
-    public InspectionBatch getById(Long id) {
-        return inspectionBatchRepository.findById(id)
+    public InspectionBatchVO getById(Long id) {
+        InspectionBatch batch = inspectionBatchRepository.findById(id)
                 .orElseThrow(() -> new BusinessException("检验批次不存在"));
+        initializeLazyAssociations(batch);
+        return VoConverter.toInspectionBatchVO(batch);
     }
 
-    public InspectionBatch getByBatchNo(String batchNo) {
+    public InspectionBatchVO getByBatchNo(String batchNo) {
+        InspectionBatch batch = inspectionBatchRepository.findByBatchNo(batchNo)
+                .orElseThrow(() -> new BusinessException("检验批次不存在: " + batchNo));
+        initializeLazyAssociations(batch);
+        return VoConverter.toInspectionBatchVO(batch);
+    }
+
+    public List<InspectionBatchVO> list() {
+        List<InspectionBatch> batches = inspectionBatchRepository.findAll();
+        for (InspectionBatch batch : batches) {
+            initializeLazyAssociations(batch);
+        }
+        return VoConverter.toInspectionBatchVOList(batches);
+    }
+
+    public List<InspectionBatchVO> listByStatus(InspectionStatus status) {
+        List<InspectionBatch> batches = inspectionBatchRepository.findByStatus(status);
+        for (InspectionBatch batch : batches) {
+            initializeLazyAssociations(batch);
+        }
+        return VoConverter.toInspectionBatchVOList(batches);
+    }
+
+    @Transactional
+    public InspectionBatchVO updateStatus(String batchNo, InspectionStatus status) {
+        InspectionBatch batch = getByBatchNoInternal(batchNo);
+        batch.setStatus(status);
+        return VoConverter.toInspectionBatchVO(inspectionBatchRepository.save(batch));
+    }
+
+    InspectionBatch getByBatchNoInternal(String batchNo) {
         return inspectionBatchRepository.findByBatchNo(batchNo)
                 .orElseThrow(() -> new BusinessException("检验批次不存在: " + batchNo));
     }
 
-    public List<InspectionBatch> list() {
-        return inspectionBatchRepository.findAll();
-    }
-
-    public List<InspectionBatch> listByStatus(InspectionStatus status) {
-        return inspectionBatchRepository.findByStatus(status);
-    }
-
-    @Transactional
-    public InspectionBatch updateStatus(String batchNo, InspectionStatus status) {
-        InspectionBatch batch = getByBatchNo(batchNo);
-        batch.setStatus(status);
-        return inspectionBatchRepository.save(batch);
+    private void initializeLazyAssociations(InspectionBatch batch) {
+        if (batch.getPurchaseOrder() != null) {
+            batch.getPurchaseOrder().getOrderNo();
+        }
+        if (batch.getSupplier() != null) {
+            batch.getSupplier().getSupplierName();
+        }
+        if (batch.getMaterial() != null) {
+            batch.getMaterial().getMaterialName();
+        }
     }
 
     private String generateBatchNo() {

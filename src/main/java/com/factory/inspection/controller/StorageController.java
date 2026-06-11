@@ -2,8 +2,8 @@ package com.factory.inspection.controller;
 
 import com.factory.inspection.common.Result;
 import com.factory.inspection.dto.StorageRecordDTO;
-import com.factory.inspection.entity.StorageRecord;
 import com.factory.inspection.service.StorageService;
+import com.factory.inspection.vo.StorageRecordVO;
 import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
@@ -22,27 +22,27 @@ public class StorageController {
     }
 
     @PostMapping
-    public Result<StorageRecord> createStorage(@Valid @RequestBody StorageRecordDTO dto) {
+    public Result<StorageRecordVO> createStorage(@Valid @RequestBody StorageRecordDTO dto) {
         return Result.success(storageService.createStorage(dto));
     }
 
     @GetMapping("/{id}")
-    public Result<StorageRecord> getById(@PathVariable Long id) {
+    public Result<StorageRecordVO> getById(@PathVariable Long id) {
         return Result.success(storageService.getById(id));
     }
 
     @GetMapping("/storageNo/{storageNo}")
-    public Result<StorageRecord> getByStorageNo(@PathVariable String storageNo) {
+    public Result<StorageRecordVO> getByStorageNo(@PathVariable String storageNo) {
         return Result.success(storageService.getByStorageNo(storageNo));
     }
 
     @GetMapping
-    public Result<List<StorageRecord>> list() {
+    public Result<List<StorageRecordVO>> list() {
         return Result.success(storageService.list());
     }
 
     @GetMapping("/batch/{batchId}")
-    public Result<List<StorageRecord>> getByBatchId(@PathVariable Long batchId) {
+    public Result<List<StorageRecordVO>> getByBatchId(@PathVariable Long batchId) {
         return Result.success(storageService.getByBatchId(batchId));
     }
 }

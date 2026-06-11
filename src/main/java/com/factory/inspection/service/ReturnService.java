@@ -1,13 +1,14 @@
 package com.factory.inspection.service;
 
+import com.factory.inspection.common.VoConverter;
 import com.factory.inspection.dto.ReturnRecordDTO;
 import com.factory.inspection.dto.SupplierConfirmReturnDTO;
 import com.factory.inspection.entity.InspectionBatch;
 import com.factory.inspection.entity.ReturnRecord;
 import com.factory.inspection.enums.InspectionStatus;
-import com.factory.inspection.enums.UnqualifiedType;
 import com.factory.inspection.exception.BusinessException;
 import com.factory.inspection.repository.ReturnRecordRepository;
+import com.factory.inspection.vo.ReturnRecordVO;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -33,8 +34,8 @@ public class ReturnService {
     }
 
     @Transactional
-    public ReturnRecord createReturn(ReturnRecordDTO dto) {
-        InspectionBatch batch = inspectionBatchService.getByBatchNo(dto.getBatchNo());
+    public ReturnRecordVO createReturn(ReturnRecordDTO dto) {
+        InspectionBatch batch = inspectionBatchService.getByBatchNoInternal(dto.getBatchNo());
 
         if (batch.getStatus() != InspectionStatus.UNQUALIFIED
                 && batch.getStatus() != InspectionStatus.CONCESSION_REJECTED) {
@@ -58,11 +59,13 @@ public class ReturnService {
 
         inspectionBatchService.updateStatus(dto.getBatchNo(), InspectionStatus.RETURN_PENDING);
 
-        return returnRecordRepository.save(returnRecord);
+        ReturnRecord saved = returnRecordRepository.save(returnRecord);
+        initializeLazyAssociations(saved);
+        return VoConverter.toReturnRecordVO(saved);
     }
 
     @Transactional
-    public ReturnRecord supplierConfirm(SupplierConfirmReturnDTO dto) {
+    public ReturnRecordVO supplierConfirm(SupplierConfirmReturnDTO dto) {
         ReturnRecord returnRecord = returnRecordRepository.findByReturnNo(dto.getReturnNo())
                 .orElseThrow(() -> new BusinessException("退货单不存在: " + dto.getReturnNo()));
 
@@ -77,25 +80,48 @@ public class ReturnService {
             inspectionBatchService.updateStatus(returnRecord.getBatch().getBatchNo(), InspectionStatus.REJECTED_BY_SUPPLIER);
         }
 
-        return returnRecordRepository.save(returnRecord);
+        ReturnRecord saved = returnRecordRepository.save(returnRecord);
+        initializeLazyAssociations(saved);
+        return VoConverter.toReturnRecordVO(saved);
     }
 
-    public ReturnRecord getById(Long id) {
-        return returnRecordRepository.findById(id)
+    public ReturnRecordVO getById(Long id) {
+        ReturnRecord returnRecord = returnRecordRepository.findById(id)
                 .orElseThrow(() -> new BusinessException("退货单不存在"));
+        initializeLazyAssociations(returnRecord);
+        return VoConverter.toReturnRecordVO(returnRecord);
     }
 
-    public ReturnRecord getByReturnNo(String returnNo) {
-        return returnRecordRepository.findByReturnNo(returnNo)
+    public ReturnRecordVO getByReturnNo(String returnNo) {
+        ReturnRecord returnRecord = returnRecordRepository.findByReturnNo(returnNo)
                 .orElseThrow(() -> new BusinessException("退货单不存在: " + returnNo));
+        initializeLazyAssociations(returnRecord);
+        return VoConverter.toReturnRecordVO(returnRecord);
     }
 
-    public List<ReturnRecord> list() {
-        return returnRecordRepository.findAll();
+    public List<ReturnRecordVO> list() {
+        List<ReturnRecord> list = returnRecordRepository.findAll();
+        for (ReturnRecord record : list) {
+            initializeLazyAssociations(record);
+        }
+        return VoConverter.toReturnRecordVOList(list);
     }
 
-    public List<ReturnRecord> getByBatchId(Long batchId) {
-        return returnRecordRepository.findByBatchId(batchId);
+    public List<ReturnRecordVO> getByBatchId(Long batchId) {
+        List<ReturnRecord> list = returnRecordRepository.findByBatchId(batchId);
+        for (ReturnRecord record : list) {
+            initializeLazyAssociations(record);
+        }
+        return VoConverter.toReturnRecordVOList(list);
+    }
+
+    private void initializeLazyAssociations(ReturnRecord record) {
+        if (record.getBatch() != null) {
+            record.getBatch().getBatchNo();
+        }
+        if (record.getSupplier() != null) {
+            record.getSupplier().getSupplierName();
+        }
     }
 
     private String generateReturnNo() {

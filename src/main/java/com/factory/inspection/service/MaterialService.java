@@ -1,8 +1,10 @@
 package com.factory.inspection.service;
 
+import com.factory.inspection.common.VoConverter;
 import com.factory.inspection.entity.Material;
 import com.factory.inspection.exception.BusinessException;
 import com.factory.inspection.repository.MaterialRepository;
+import com.factory.inspection.vo.MaterialVO;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -20,39 +22,45 @@ public class MaterialService {
     }
 
     @Transactional
-    public Material create(Material material) {
+    public MaterialVO create(Material material) {
         if (materialRepository.findByMaterialCode(material.getMaterialCode()).isPresent()) {
             throw new BusinessException("物料编码已存在");
         }
-        return materialRepository.save(material);
+        return VoConverter.toMaterialVO(materialRepository.save(material));
     }
 
-    public Material getById(Long id) {
-        return materialRepository.findById(id)
-                .orElseThrow(() -> new BusinessException("物料不存在"));
+    public MaterialVO getById(Long id) {
+        return VoConverter.toMaterialVO(materialRepository.findById(id)
+                .orElseThrow(() -> new BusinessException("物料不存在")));
     }
 
-    public Material getByCode(String materialCode) {
-        return materialRepository.findByMaterialCode(materialCode)
-                .orElseThrow(() -> new BusinessException("物料不存在: " + materialCode));
+    public MaterialVO getByCode(String materialCode) {
+        return VoConverter.toMaterialVO(materialRepository.findByMaterialCode(materialCode)
+                .orElseThrow(() -> new BusinessException("物料不存在: " + materialCode)));
     }
 
-    public List<Material> list() {
-        return materialRepository.findAll();
+    public List<MaterialVO> list() {
+        return VoConverter.toMaterialVOList(materialRepository.findAll());
     }
 
     @Transactional
-    public Material update(Long id, Material material) {
-        Material existing = getById(id);
+    public MaterialVO update(Long id, Material material) {
+        Material existing = materialRepository.findById(id)
+                .orElseThrow(() -> new BusinessException("物料不存在"));
         existing.setMaterialName(material.getMaterialName());
         existing.setSpecification(material.getSpecification());
         existing.setUnit(material.getUnit());
         existing.setWarehouseLocation(material.getWarehouseLocation());
-        return materialRepository.save(existing);
+        return VoConverter.toMaterialVO(materialRepository.save(existing));
     }
 
     @Transactional
     public void delete(Long id) {
         materialRepository.deleteById(id);
+    }
+
+    public Material getByCodeInternal(String materialCode) {
+        return materialRepository.findByMaterialCode(materialCode)
+                .orElseThrow(() -> new BusinessException("物料不存在: " + materialCode));
     }
 }

@@ -1,5 +1,6 @@
 package com.factory.inspection.service;
 
+import com.factory.inspection.common.VoConverter;
 import com.factory.inspection.dto.DefectRecordDTO;
 import com.factory.inspection.dto.InspectionRecordDTO;
 import com.factory.inspection.entity.DefectRecord;
@@ -12,6 +13,9 @@ import com.factory.inspection.enums.UnqualifiedType;
 import com.factory.inspection.exception.BusinessException;
 import com.factory.inspection.repository.DefectRecordRepository;
 import com.factory.inspection.repository.InspectionRecordRepository;
+import com.factory.inspection.vo.DefectRecordVO;
+import com.factory.inspection.vo.InspectionBatchVO;
+import com.factory.inspection.vo.InspectionRecordVO;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -35,8 +39,8 @@ public class InspectionService {
     }
 
     @Transactional
-    public InspectionRecord addInspectionRecord(InspectionRecordDTO dto) {
-        InspectionBatch batch = inspectionBatchService.getByBatchNo(dto.getBatchNo());
+    public InspectionRecordVO addInspectionRecord(InspectionRecordDTO dto) {
+        InspectionBatch batch = inspectionBatchService.getByBatchNoInternal(dto.getBatchNo());
 
         if (batch.getStatus() != InspectionStatus.INSPECTING && batch.getStatus() != InspectionStatus.SAMPLING) {
             throw new BusinessException("当前批次状态不允许录入检验记录，当前状态: " + batch.getStatus());
@@ -56,12 +60,16 @@ public class InspectionService {
         record.setRemark(dto.getRemark());
         record.setInspector(dto.getInspector());
 
-        return inspectionRecordRepository.save(record);
+        InspectionRecord saved = inspectionRecordRepository.save(record);
+        if (saved.getBatch() != null) {
+            saved.getBatch().getBatchNo();
+        }
+        return VoConverter.toInspectionRecordVO(saved);
     }
 
     @Transactional
-    public DefectRecord addDefectRecord(DefectRecordDTO dto) {
-        InspectionBatch batch = inspectionBatchService.getByBatchNo(dto.getBatchNo());
+    public DefectRecordVO addDefectRecord(DefectRecordDTO dto) {
+        InspectionBatch batch = inspectionBatchService.getByBatchNoInternal(dto.getBatchNo());
 
         if (batch.getStatus() != InspectionStatus.INSPECTING) {
             throw new BusinessException("当前批次状态不允许录入缺陷记录，当前状态: " + batch.getStatus());
@@ -75,12 +83,16 @@ public class InspectionService {
         record.setDescription(dto.getDescription());
         record.setRecorder(dto.getRecorder());
 
-        return defectRecordRepository.save(record);
+        DefectRecord saved = defectRecordRepository.save(record);
+        if (saved.getBatch() != null) {
+            saved.getBatch().getBatchNo();
+        }
+        return VoConverter.toDefectRecordVO(saved);
     }
 
     @Transactional
-    public InspectionBatch judgeInspectionResult(String batchNo) {
-        InspectionBatch batch = inspectionBatchService.getByBatchNo(batchNo);
+    public InspectionBatchVO judgeInspectionResult(String batchNo) {
+        InspectionBatch batch = inspectionBatchService.getByBatchNoInternal(batchNo);
 
         if (batch.getStatus() != InspectionStatus.INSPECTING) {
             throw new BusinessException("当前批次状态不允许判定，当前状态: " + batch.getStatus());
@@ -114,11 +126,23 @@ public class InspectionService {
         }
     }
 
-    public List<InspectionRecord> getRecordsByBatchId(Long batchId) {
-        return inspectionRecordRepository.findByBatchId(batchId);
+    public List<InspectionRecordVO> getRecordsByBatchId(Long batchId) {
+        List<InspectionRecord> records = inspectionRecordRepository.findByBatchId(batchId);
+        for (InspectionRecord record : records) {
+            if (record.getBatch() != null) {
+                record.getBatch().getBatchNo();
+            }
+        }
+        return VoConverter.toInspectionRecordVOList(records);
     }
 
-    public List<DefectRecord> getDefectsByBatchId(Long batchId) {
-        return defectRecordRepository.findByBatchId(batchId);
+    public List<DefectRecordVO> getDefectsByBatchId(Long batchId) {
+        List<DefectRecord> records = defectRecordRepository.findByBatchId(batchId);
+        for (DefectRecord record : records) {
+            if (record.getBatch() != null) {
+                record.getBatch().getBatchNo();
+            }
+        }
+        return VoConverter.toDefectRecordVOList(records);
     }
 }

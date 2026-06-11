@@ -1,5 +1,6 @@
 package com.factory.inspection.service;
 
+import com.factory.inspection.common.VoConverter;
 import com.factory.inspection.dto.ConcessionAcceptanceDTO;
 import com.factory.inspection.dto.ConcessionApproveDTO;
 import com.factory.inspection.entity.ConcessionAcceptance;
@@ -7,6 +8,7 @@ import com.factory.inspection.entity.InspectionBatch;
 import com.factory.inspection.enums.InspectionStatus;
 import com.factory.inspection.exception.BusinessException;
 import com.factory.inspection.repository.ConcessionAcceptanceRepository;
+import com.factory.inspection.vo.ConcessionAcceptanceVO;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -27,8 +29,8 @@ public class ConcessionService {
     }
 
     @Transactional
-    public ConcessionAcceptance applyConcession(ConcessionAcceptanceDTO dto) {
-        InspectionBatch batch = inspectionBatchService.getByBatchNo(dto.getBatchNo());
+    public ConcessionAcceptanceVO applyConcession(ConcessionAcceptanceDTO dto) {
+        InspectionBatch batch = inspectionBatchService.getByBatchNoInternal(dto.getBatchNo());
 
         if (batch.getStatus() != InspectionStatus.UNQUALIFIED) {
             throw new BusinessException("当前批次状态不允许申请让步接收，当前状态: " + batch.getStatus());
@@ -49,11 +51,15 @@ public class ConcessionService {
 
         inspectionBatchService.updateStatus(dto.getBatchNo(), InspectionStatus.CONCESSION_PENDING);
 
-        return concessionAcceptanceRepository.save(concession);
+        ConcessionAcceptance saved = concessionAcceptanceRepository.save(concession);
+        if (saved.getBatch() != null) {
+            saved.getBatch().getBatchNo();
+        }
+        return VoConverter.toConcessionAcceptanceVO(saved);
     }
 
     @Transactional
-    public ConcessionAcceptance approveConcession(ConcessionApproveDTO dto) {
+    public ConcessionAcceptanceVO approveConcession(ConcessionApproveDTO dto) {
         ConcessionAcceptance concession = concessionAcceptanceRepository.findById(dto.getConcessionId())
                 .orElseThrow(() -> new BusinessException("让步接收申请不存在"));
 
@@ -72,19 +78,39 @@ public class ConcessionService {
             inspectionBatchService.updateStatus(concession.getBatch().getBatchNo(), InspectionStatus.CONCESSION_REJECTED);
         }
 
-        return concessionAcceptanceRepository.save(concession);
+        ConcessionAcceptance saved = concessionAcceptanceRepository.save(concession);
+        if (saved.getBatch() != null) {
+            saved.getBatch().getBatchNo();
+        }
+        return VoConverter.toConcessionAcceptanceVO(saved);
     }
 
-    public ConcessionAcceptance getById(Long id) {
-        return concessionAcceptanceRepository.findById(id)
+    public ConcessionAcceptanceVO getById(Long id) {
+        ConcessionAcceptance concession = concessionAcceptanceRepository.findById(id)
                 .orElseThrow(() -> new BusinessException("让步接收申请不存在"));
+        if (concession.getBatch() != null) {
+            concession.getBatch().getBatchNo();
+        }
+        return VoConverter.toConcessionAcceptanceVO(concession);
     }
 
-    public List<ConcessionAcceptance> list() {
-        return concessionAcceptanceRepository.findAll();
+    public List<ConcessionAcceptanceVO> list() {
+        List<ConcessionAcceptance> list = concessionAcceptanceRepository.findAll();
+        for (ConcessionAcceptance concession : list) {
+            if (concession.getBatch() != null) {
+                concession.getBatch().getBatchNo();
+            }
+        }
+        return VoConverter.toConcessionAcceptanceVOList(list);
     }
 
-    public List<ConcessionAcceptance> getByBatchId(Long batchId) {
-        return concessionAcceptanceRepository.findByBatchId(batchId);
+    public List<ConcessionAcceptanceVO> getByBatchId(Long batchId) {
+        List<ConcessionAcceptance> list = concessionAcceptanceRepository.findByBatchId(batchId);
+        for (ConcessionAcceptance concession : list) {
+            if (concession.getBatch() != null) {
+                concession.getBatch().getBatchNo();
+            }
+        }
+        return VoConverter.toConcessionAcceptanceVOList(list);
     }
 }

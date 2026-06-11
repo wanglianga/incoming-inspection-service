@@ -1,8 +1,10 @@
 package com.factory.inspection.service;
 
+import com.factory.inspection.common.VoConverter;
 import com.factory.inspection.entity.Supplier;
 import com.factory.inspection.exception.BusinessException;
 import com.factory.inspection.repository.SupplierRepository;
+import com.factory.inspection.vo.SupplierVO;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -20,39 +22,45 @@ public class SupplierService {
     }
 
     @Transactional
-    public Supplier create(Supplier supplier) {
+    public SupplierVO create(Supplier supplier) {
         if (supplierRepository.findBySupplierCode(supplier.getSupplierCode()).isPresent()) {
             throw new BusinessException("供应商编码已存在");
         }
-        return supplierRepository.save(supplier);
+        return VoConverter.toSupplierVO(supplierRepository.save(supplier));
     }
 
-    public Supplier getById(Long id) {
-        return supplierRepository.findById(id)
-                .orElseThrow(() -> new BusinessException("供应商不存在"));
+    public SupplierVO getById(Long id) {
+        return VoConverter.toSupplierVO(supplierRepository.findById(id)
+                .orElseThrow(() -> new BusinessException("供应商不存在")));
     }
 
-    public Supplier getByCode(String supplierCode) {
-        return supplierRepository.findBySupplierCode(supplierCode)
-                .orElseThrow(() -> new BusinessException("供应商不存在: " + supplierCode));
+    public SupplierVO getByCode(String supplierCode) {
+        return VoConverter.toSupplierVO(supplierRepository.findBySupplierCode(supplierCode)
+                .orElseThrow(() -> new BusinessException("供应商不存在: " + supplierCode)));
     }
 
-    public List<Supplier> list() {
-        return supplierRepository.findAll();
+    public List<SupplierVO> list() {
+        return VoConverter.toSupplierVOList(supplierRepository.findAll());
     }
 
     @Transactional
-    public Supplier update(Long id, Supplier supplier) {
-        Supplier existing = getById(id);
+    public SupplierVO update(Long id, Supplier supplier) {
+        Supplier existing = supplierRepository.findById(id)
+                .orElseThrow(() -> new BusinessException("供应商不存在"));
         existing.setSupplierName(supplier.getSupplierName());
         existing.setContactPerson(supplier.getContactPerson());
         existing.setContactPhone(supplier.getContactPhone());
         existing.setAddress(supplier.getAddress());
-        return supplierRepository.save(existing);
+        return VoConverter.toSupplierVO(supplierRepository.save(existing));
     }
 
     @Transactional
     public void delete(Long id) {
         supplierRepository.deleteById(id);
+    }
+
+    public Supplier getByCodeInternal(String supplierCode) {
+        return supplierRepository.findBySupplierCode(supplierCode)
+                .orElseThrow(() -> new BusinessException("供应商不存在: " + supplierCode));
     }
 }

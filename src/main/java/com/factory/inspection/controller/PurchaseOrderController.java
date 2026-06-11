@@ -3,6 +3,7 @@ package com.factory.inspection.controller;
 import com.factory.inspection.common.Result;
 import com.factory.inspection.entity.PurchaseOrder;
 import com.factory.inspection.service.PurchaseOrderService;
+import com.factory.inspection.vo.PurchaseOrderVO;
 import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
@@ -21,27 +22,27 @@ public class PurchaseOrderController {
     }
 
     @PostMapping
-    public Result<PurchaseOrder> create(@Valid @RequestBody PurchaseOrder order) {
+    public Result<PurchaseOrderVO> create(@Valid @RequestBody PurchaseOrder order) {
         return Result.success(purchaseOrderService.create(order));
     }
 
     @GetMapping("/{id}")
-    public Result<PurchaseOrder> getById(@PathVariable Long id) {
+    public Result<PurchaseOrderVO> getById(@PathVariable Long id) {
         return Result.success(purchaseOrderService.getById(id));
     }
 
     @GetMapping("/orderNo/{orderNo}")
-    public Result<PurchaseOrder> getByOrderNo(@PathVariable String orderNo) {
+    public Result<PurchaseOrderVO> getByOrderNo(@PathVariable String orderNo) {
         return Result.success(purchaseOrderService.getByOrderNo(orderNo));
     }
 
     @GetMapping
-    public Result<List<PurchaseOrder>> list() {
+    public Result<List<PurchaseOrderVO>> list() {
         return Result.success(purchaseOrderService.list());
     }
 
     @PutMapping("/{id}")
-    public Result<PurchaseOrder> update(@PathVariable Long id, @Valid @RequestBody PurchaseOrder order) {
+    public Result<PurchaseOrderVO> update(@PathVariable Long id, @Valid @RequestBody PurchaseOrder order) {
         return Result.success(purchaseOrderService.update(id, order));
     }
 

@@ -3,10 +3,10 @@ package com.factory.inspection.controller;
 import com.factory.inspection.common.Result;
 import com.factory.inspection.dto.DefectRecordDTO;
 import com.factory.inspection.dto.InspectionRecordDTO;
-import com.factory.inspection.entity.DefectRecord;
-import com.factory.inspection.entity.InspectionBatch;
-import com.factory.inspection.entity.InspectionRecord;
 import com.factory.inspection.service.InspectionService;
+import com.factory.inspection.vo.DefectRecordVO;
+import com.factory.inspection.vo.InspectionBatchVO;
+import com.factory.inspection.vo.InspectionRecordVO;
 import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
@@ -25,27 +25,27 @@ public class InspectionController {
     }
 
     @PostMapping("/record")
-    public Result<InspectionRecord> addInspectionRecord(@Valid @RequestBody InspectionRecordDTO dto) {
+    public Result<InspectionRecordVO> addInspectionRecord(@Valid @RequestBody InspectionRecordDTO dto) {
         return Result.success(inspectionService.addInspectionRecord(dto));
     }
 
     @PostMapping("/defect")
-    public Result<DefectRecord> addDefectRecord(@Valid @RequestBody DefectRecordDTO dto) {
+    public Result<DefectRecordVO> addDefectRecord(@Valid @RequestBody DefectRecordDTO dto) {
         return Result.success(inspectionService.addDefectRecord(dto));
     }
 
     @PostMapping("/judge/{batchNo}")
-    public Result<InspectionBatch> judgeInspectionResult(@PathVariable String batchNo) {
+    public Result<InspectionBatchVO> judgeInspectionResult(@PathVariable String batchNo) {
         return Result.success(inspectionService.judgeInspectionResult(batchNo));
     }
 
     @GetMapping("/records/batch/{batchId}")
-    public Result<List<InspectionRecord>> getRecordsByBatchId(@PathVariable Long batchId) {
+    public Result<List<InspectionRecordVO>> getRecordsByBatchId(@PathVariable Long batchId) {
         return Result.success(inspectionService.getRecordsByBatchId(batchId));
     }
 
     @GetMapping("/defects/batch/{batchId}")
-    public Result<List<DefectRecord>> getDefectsByBatchId(@PathVariable Long batchId) {
+    public Result<List<DefectRecordVO>> getDefectsByBatchId(@PathVariable Long batchId) {
         return Result.success(inspectionService.getDefectsByBatchId(batchId));
     }
 }
