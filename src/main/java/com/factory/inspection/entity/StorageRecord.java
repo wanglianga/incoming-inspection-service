@@ -36,6 +36,15 @@ public class StorageRecord {
     @Column(length = 500)
     private String remark;
 
+    @Column
+    private Long concessionId;
+
+    @Column
+    private Boolean isConcessionRestricted;
+
+    @Column(length = 1000)
+    private String applicableWorkOrder;
+
     @CreationTimestamp
     @Column(updatable = false)
     private LocalDateTime createTime;
@@ -105,6 +114,30 @@ public class StorageRecord {
 
     public void setRemark(String remark) {
         this.remark = remark;
+    }
+
+    public Long getConcessionId() {
+        return concessionId;
+    }
+
+    public void setConcessionId(Long concessionId) {
+        this.concessionId = concessionId;
+    }
+
+    public Boolean getIsConcessionRestricted() {
+        return isConcessionRestricted;
+    }
+
+    public void setIsConcessionRestricted(Boolean isConcessionRestricted) {
+        this.isConcessionRestricted = isConcessionRestricted;
+    }
+
+    public String getApplicableWorkOrder() {
+        return applicableWorkOrder;
+    }
+
+    public void setApplicableWorkOrder(String applicableWorkOrder) {
+        this.applicableWorkOrder = applicableWorkOrder;
     }
 
     public LocalDateTime getCreateTime() {

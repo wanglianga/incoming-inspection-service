@@ -19,6 +19,7 @@ public class VoConverter {
         vo.setContactPerson(entity.getContactPerson());
         vo.setContactPhone(entity.getContactPhone());
         vo.setAddress(entity.getAddress());
+        vo.setHistoricalDefectRate(entity.getHistoricalDefectRate());
         vo.setCreateTime(entity.getCreateTime());
         vo.setUpdateTime(entity.getUpdateTime());
         return vo;
@@ -46,6 +47,8 @@ public class VoConverter {
         vo.setSpecification(entity.getSpecification());
         vo.setUnit(entity.getUnit());
         vo.setWarehouseLocation(entity.getWarehouseLocation());
+        vo.setRiskLevel(entity.getRiskLevel());
+        vo.setIsNewMaterial(entity.getIsNewMaterial());
         vo.setCreateTime(entity.getCreateTime());
         vo.setUpdateTime(entity.getUpdateTime());
         return vo;
@@ -127,6 +130,7 @@ public class VoConverter {
         vo.setArrivedQuantity(entity.getArrivedQuantity());
         vo.setSampleQuantity(entity.getSampleQuantity());
         vo.setSamplingScheme(entity.getSamplingScheme());
+        vo.setSamplingReasons(entity.getSamplingReasons());
         vo.setUrgencyLevel(entity.getUrgencyLevel());
         vo.setStatus(entity.getStatus());
         vo.setInspector(entity.getInspector());
@@ -226,6 +230,8 @@ public class VoConverter {
         vo.setApprover(entity.getApprover());
         vo.setApproveStatus(entity.getApproveStatus());
         vo.setApproveRemark(entity.getApproveRemark());
+        vo.setApplicableWorkOrders(entity.getApplicableWorkOrders());
+        vo.setRiskDescription(entity.getRiskDescription());
         vo.setCreateTime(entity.getCreateTime());
         vo.setUpdateTime(entity.getUpdateTime());
         return vo;
@@ -291,6 +297,9 @@ public class VoConverter {
         vo.setWarehouseLocation(entity.getWarehouseLocation());
         vo.setReceiver(entity.getReceiver());
         vo.setRemark(entity.getRemark());
+        vo.setConcessionId(entity.getConcessionId());
+        vo.setIsConcessionRestricted(entity.getIsConcessionRestricted());
+        vo.setApplicableWorkOrder(entity.getApplicableWorkOrder());
         vo.setCreateTime(entity.getCreateTime());
         vo.setUpdateTime(entity.getUpdateTime());
         return vo;

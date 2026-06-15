@@ -47,6 +47,8 @@ public class ConcessionService {
         concession.setAcceptedQuantity(dto.getAcceptedQuantity());
         concession.setConditions(dto.getConditions());
         concession.setApplicant(dto.getApplicant());
+        concession.setApplicableWorkOrders(dto.getApplicableWorkOrders());
+        concession.setRiskDescription(dto.getRiskDescription());
         concession.setApproveStatus("PENDING");
 
         inspectionBatchService.updateStatus(dto.getBatchNo(), InspectionStatus.CONCESSION_PENDING);

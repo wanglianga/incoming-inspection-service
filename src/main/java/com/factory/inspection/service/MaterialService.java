@@ -51,6 +51,8 @@ public class MaterialService {
         existing.setSpecification(material.getSpecification());
         existing.setUnit(material.getUnit());
         existing.setWarehouseLocation(material.getWarehouseLocation());
+        existing.setRiskLevel(material.getRiskLevel());
+        existing.setIsNewMaterial(material.getIsNewMaterial());
         return VoConverter.toMaterialVO(materialRepository.save(existing));
     }
 

@@ -18,6 +18,10 @@ public class StorageRecordDTO {
 
     private String remark;
 
+    private Long concessionId;
+
+    private String applicableWorkOrder;
+
     public String getBatchNo() {
         return batchNo;
     }
@@ -56,5 +60,21 @@ public class StorageRecordDTO {
 
     public void setRemark(String remark) {
         this.remark = remark;
+    }
+
+    public Long getConcessionId() {
+        return concessionId;
+    }
+
+    public void setConcessionId(Long concessionId) {
+        this.concessionId = concessionId;
+    }
+
+    public String getApplicableWorkOrder() {
+        return applicableWorkOrder;
+    }
+
+    public void setApplicableWorkOrder(String applicableWorkOrder) {
+        this.applicableWorkOrder = applicableWorkOrder;
     }
 }

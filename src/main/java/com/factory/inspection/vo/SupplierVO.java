@@ -10,6 +10,7 @@ public class SupplierVO {
     private String contactPerson;
     private String contactPhone;
     private String address;
+    private Double historicalDefectRate;
     private LocalDateTime createTime;
     private LocalDateTime updateTime;
 
@@ -59,6 +60,14 @@ public class SupplierVO {
 
     public void setAddress(String address) {
         this.address = address;
+    }
+
+    public Double getHistoricalDefectRate() {
+        return historicalDefectRate;
+    }
+
+    public void setHistoricalDefectRate(Double historicalDefectRate) {
+        this.historicalDefectRate = historicalDefectRate;
     }
 
     public LocalDateTime getCreateTime() {

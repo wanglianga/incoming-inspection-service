@@ -42,6 +42,9 @@ public class InspectionBatch {
     @Column(length = 200)
     private String samplingScheme;
 
+    @Column(length = 1000)
+    private String samplingReasons;
+
     @Enumerated(EnumType.STRING)
     @Column(length = 30)
     private UrgencyLevel urgencyLevel;
@@ -133,6 +136,14 @@ public class InspectionBatch {
 
     public void setSamplingScheme(String samplingScheme) {
         this.samplingScheme = samplingScheme;
+    }
+
+    public String getSamplingReasons() {
+        return samplingReasons;
+    }
+
+    public void setSamplingReasons(String samplingReasons) {
+        this.samplingReasons = samplingReasons;
     }
 
     public UrgencyLevel getUrgencyLevel() {

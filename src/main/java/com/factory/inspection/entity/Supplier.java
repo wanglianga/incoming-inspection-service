@@ -28,6 +28,9 @@ public class Supplier {
     @Column(length = 200)
     private String address;
 
+    @Column
+    private Double historicalDefectRate;
+
     @CreationTimestamp
     @Column(updatable = false)
     private LocalDateTime createTime;
@@ -81,6 +84,14 @@ public class Supplier {
 
     public void setAddress(String address) {
         this.address = address;
+    }
+
+    public Double getHistoricalDefectRate() {
+        return historicalDefectRate;
+    }
+
+    public void setHistoricalDefectRate(Double historicalDefectRate) {
+        this.historicalDefectRate = historicalDefectRate;
     }
 
     public LocalDateTime getCreateTime() {

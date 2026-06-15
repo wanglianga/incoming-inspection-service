@@ -51,6 +51,7 @@ public class SupplierService {
         existing.setContactPerson(supplier.getContactPerson());
         existing.setContactPhone(supplier.getContactPhone());
         existing.setAddress(supplier.getAddress());
+        existing.setHistoricalDefectRate(supplier.getHistoricalDefectRate());
         return VoConverter.toSupplierVO(supplierRepository.save(existing));
     }
 

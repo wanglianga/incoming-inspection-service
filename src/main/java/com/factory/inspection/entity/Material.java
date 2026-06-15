@@ -1,5 +1,6 @@
 package com.factory.inspection.entity;
 
+import com.factory.inspection.enums.MaterialRiskLevel;
 import jakarta.persistence.*;
 import org.hibernate.annotations.CreationTimestamp;
 import org.hibernate.annotations.UpdateTimestamp;
@@ -27,6 +28,13 @@ public class Material {
 
     @Column(length = 50)
     private String warehouseLocation;
+
+    @Enumerated(EnumType.STRING)
+    @Column(length = 30)
+    private MaterialRiskLevel riskLevel;
+
+    @Column
+    private Boolean isNewMaterial;
 
     @CreationTimestamp
     @Column(updatable = false)
@@ -81,6 +89,22 @@ public class Material {
 
     public void setWarehouseLocation(String warehouseLocation) {
         this.warehouseLocation = warehouseLocation;
+    }
+
+    public MaterialRiskLevel getRiskLevel() {
+        return riskLevel;
+    }
+
+    public void setRiskLevel(MaterialRiskLevel riskLevel) {
+        this.riskLevel = riskLevel;
+    }
+
+    public Boolean getIsNewMaterial() {
+        return isNewMaterial;
+    }
+
+    public void setIsNewMaterial(Boolean isNewMaterial) {
+        this.isNewMaterial = isNewMaterial;
     }
 
     public LocalDateTime getCreateTime() {

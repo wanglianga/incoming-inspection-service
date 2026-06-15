@@ -43,6 +43,12 @@ public class ConcessionAcceptance {
     @Column(length = 500)
     private String approveRemark;
 
+    @Column(length = 1000)
+    private String applicableWorkOrders;
+
+    @Column(length = 1000)
+    private String riskDescription;
+
     @CreationTimestamp
     @Column(updatable = false)
     private LocalDateTime createTime;
@@ -128,6 +134,22 @@ public class ConcessionAcceptance {
 
     public void setApproveRemark(String approveRemark) {
         this.approveRemark = approveRemark;
+    }
+
+    public String getApplicableWorkOrders() {
+        return applicableWorkOrders;
+    }
+
+    public void setApplicableWorkOrders(String applicableWorkOrders) {
+        this.applicableWorkOrders = applicableWorkOrders;
+    }
+
+    public String getRiskDescription() {
+        return riskDescription;
+    }
+
+    public void setRiskDescription(String riskDescription) {
+        this.riskDescription = riskDescription;
     }
 
     public LocalDateTime getCreateTime() {

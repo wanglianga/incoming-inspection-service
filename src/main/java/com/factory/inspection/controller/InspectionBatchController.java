@@ -6,6 +6,7 @@ import com.factory.inspection.dto.SamplingDTO;
 import com.factory.inspection.enums.InspectionStatus;
 import com.factory.inspection.service.InspectionBatchService;
 import com.factory.inspection.vo.InspectionBatchVO;
+import com.factory.inspection.vo.SamplingCalculationVO;
 import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
@@ -31,6 +32,11 @@ public class InspectionBatchController {
     @PostMapping("/sampling")
     public Result<InspectionBatchVO> performSampling(@Valid @RequestBody SamplingDTO dto) {
         return Result.success(inspectionBatchService.performSampling(dto));
+    }
+
+    @GetMapping("/{batchNo}/calculate-sampling")
+    public Result<SamplingCalculationVO> calculateSampling(@PathVariable String batchNo) {
+        return Result.success(inspectionBatchService.calculateSampling(batchNo));
     }
 
     @PostMapping("/{batchNo}/start")

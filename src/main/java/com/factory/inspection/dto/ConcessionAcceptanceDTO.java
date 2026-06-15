@@ -22,6 +22,10 @@ public class ConcessionAcceptanceDTO {
 
     private String applicant;
 
+    private String applicableWorkOrders;
+
+    private String riskDescription;
+
     public String getBatchNo() {
         return batchNo;
     }
@@ -68,5 +72,21 @@ public class ConcessionAcceptanceDTO {
 
     public void setApplicant(String applicant) {
         this.applicant = applicant;
+    }
+
+    public String getApplicableWorkOrders() {
+        return applicableWorkOrders;
+    }
+
+    public void setApplicableWorkOrders(String applicableWorkOrders) {
+        this.applicableWorkOrders = applicableWorkOrders;
+    }
+
+    public String getRiskDescription() {
+        return riskDescription;
+    }
+
+    public void setRiskDescription(String riskDescription) {
+        this.riskDescription = riskDescription;
     }
 }

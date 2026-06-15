@@ -12,6 +12,9 @@ public class StorageRecordVO {
     private String warehouseLocation;
     private String receiver;
     private String remark;
+    private Long concessionId;
+    private Boolean isConcessionRestricted;
+    private String applicableWorkOrder;
     private LocalDateTime createTime;
     private LocalDateTime updateTime;
 
@@ -77,6 +80,30 @@ public class StorageRecordVO {
 
     public void setRemark(String remark) {
         this.remark = remark;
+    }
+
+    public Long getConcessionId() {
+        return concessionId;
+    }
+
+    public void setConcessionId(Long concessionId) {
+        this.concessionId = concessionId;
+    }
+
+    public Boolean getIsConcessionRestricted() {
+        return isConcessionRestricted;
+    }
+
+    public void setIsConcessionRestricted(Boolean isConcessionRestricted) {
+        this.isConcessionRestricted = isConcessionRestricted;
+    }
+
+    public String getApplicableWorkOrder() {
+        return applicableWorkOrder;
+    }
+
+    public void setApplicableWorkOrder(String applicableWorkOrder) {
+        this.applicableWorkOrder = applicableWorkOrder;
     }
 
     public LocalDateTime getCreateTime() {

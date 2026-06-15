@@ -45,4 +45,10 @@ public class StorageController {
     public Result<List<StorageRecordVO>> getByBatchId(@PathVariable Long batchId) {
         return Result.success(storageService.getByBatchId(batchId));
     }
+
+    @GetMapping("/{storageRecordId}/check-work-order")
+    public Result<Boolean> checkWorkOrderAccess(@PathVariable Long storageRecordId,
+                                                 @RequestParam String workOrderNo) {
+        return Result.success(storageService.checkWorkOrderAccess(storageRecordId, workOrderNo));
+    }
 }

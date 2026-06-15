@@ -16,6 +16,7 @@ public class InspectionBatchVO {
     private Integer arrivedQuantity;
     private Integer sampleQuantity;
     private String samplingScheme;
+    private String samplingReasons;
     private UrgencyLevel urgencyLevel;
     private InspectionStatus status;
     private String inspector;
@@ -93,6 +94,14 @@ public class InspectionBatchVO {
 
     public void setSamplingScheme(String samplingScheme) {
         this.samplingScheme = samplingScheme;
+    }
+
+    public String getSamplingReasons() {
+        return samplingReasons;
+    }
+
+    public void setSamplingReasons(String samplingReasons) {
+        this.samplingReasons = samplingReasons;
     }
 
     public UrgencyLevel getUrgencyLevel() {

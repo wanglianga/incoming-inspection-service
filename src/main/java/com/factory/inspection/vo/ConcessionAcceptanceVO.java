@@ -16,6 +16,8 @@ public class ConcessionAcceptanceVO {
     private String approver;
     private String approveStatus;
     private String approveRemark;
+    private String applicableWorkOrders;
+    private String riskDescription;
     private LocalDateTime createTime;
     private LocalDateTime updateTime;
 
@@ -97,6 +99,22 @@ public class ConcessionAcceptanceVO {
 
     public void setApproveRemark(String approveRemark) {
         this.approveRemark = approveRemark;
+    }
+
+    public String getApplicableWorkOrders() {
+        return applicableWorkOrders;
+    }
+
+    public void setApplicableWorkOrders(String applicableWorkOrders) {
+        this.applicableWorkOrders = applicableWorkOrders;
+    }
+
+    public String getRiskDescription() {
+        return riskDescription;
+    }
+
+    public void setRiskDescription(String riskDescription) {
+        this.riskDescription = riskDescription;
     }
 
     public LocalDateTime getCreateTime() {

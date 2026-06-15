@@ -1,5 +1,7 @@
 package com.factory.inspection.vo;
 
+import com.factory.inspection.enums.MaterialRiskLevel;
+
 import java.time.LocalDateTime;
 
 public class MaterialVO {
@@ -10,6 +12,8 @@ public class MaterialVO {
     private String specification;
     private String unit;
     private String warehouseLocation;
+    private MaterialRiskLevel riskLevel;
+    private Boolean isNewMaterial;
     private LocalDateTime createTime;
     private LocalDateTime updateTime;
 
@@ -59,6 +63,22 @@ public class MaterialVO {
 
     public void setWarehouseLocation(String warehouseLocation) {
         this.warehouseLocation = warehouseLocation;
+    }
+
+    public MaterialRiskLevel getRiskLevel() {
+        return riskLevel;
+    }
+
+    public void setRiskLevel(MaterialRiskLevel riskLevel) {
+        this.riskLevel = riskLevel;
+    }
+
+    public Boolean getIsNewMaterial() {
+        return isNewMaterial;
+    }
+
+    public void setIsNewMaterial(Boolean isNewMaterial) {
+        this.isNewMaterial = isNewMaterial;
     }
 
     public LocalDateTime getCreateTime() {
